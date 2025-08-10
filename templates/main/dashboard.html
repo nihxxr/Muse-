@@ -1,0 +1,27 @@
+
+{% extends "main/layout.html" %}
+{% block content %}
+<h3 class="mb-3">Generate copy from MyMuse reviews</h3>
+<p class="text-secondary">Paste a MyMuse product URL or some reviews. We'll analyze sentiments & themes and craft a headline, hook, body, and CTA.</p>
+<form method="POST" class="card bg-body-tertiary border-0 shadow-sm p-3 p-md-4">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Product Name</label>
+      <input class="form-control" name="product_name" placeholder="e.g., Beat Massager" required>
+    </div>
+    <div class="col-12">
+      <label class="form-label">Product URL (mymuse.in)</label>
+      <input class="form-control" name="url" placeholder="https://mymuse.in/products/...">
+      <div class="form-text">If reviews are dynamic, scroll the page and paste a few visible reviews below.</div>
+    </div>
+    <div class="col-12">
+      <label class="form-label">Or paste reviews (one per line)</label>
+      <textarea class="form-control" rows="6" name="pasted" placeholder="Great quality...&#10;Helped us feel more connected..."></textarea>
+    </div>
+  </div>
+  <div class="mt-3 d-flex gap-2">
+    <button class="btn btn-primary">Generate</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+</form>
+{% endblock %}
