@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block body_class %}is-landing{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <h1>Turn product reviews into ad scripts</h1>
+    <p class="hero-lede">Paste a MyMuse product link or a handful of reviews. Muse reads them for sentiment, repeated phrases and themes, then writes a headline, hook, body and call to action in your customers&rsquo; own words.</p>
+    <div class="hero-actions">
+      <a class="btn" href="{{ url_for('signup') }}">Create an account</a>
+      <a class="btn btn-ghost" href="{{ url_for('login') }}">Log in</a>
+    </div>
+  </div>
+
+  <figure class="proof" aria-label="Example: three reviews and the script written from them">
+    {% set marks = ['discreet', 'quiet yet powerful', 'luxury gift'] %}
+    <ul class="proof-reviews">
+      <li>&ldquo;{% for s in highlight('The design is so discreet I leave it on the nightstand.', marks) %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %}{% endfor %}&rdquo;</li>
+      <li>&ldquo;{% for s in highlight('Quiet yet powerful. Worth every rupee.', marks) %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %}{% endfor %}&rdquo;</li>
+      <li>&ldquo;{% for s in highlight('Felt like opening a luxury gift, not an order.', marks) %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %}{% endfor %}&rdquo;</li>
+    </ul>
+    <div class="script-card script-card-small">
+      <p class="script-headline">Quiet. Powerful. All yours.</p>
+      <p class="script-hook">The gift you give yourself arrives so discreetly even the courier won&rsquo;t guess.</p>
+      <p class="script-cta">Unwrap yours tonight</p>
+    </div>
+    <figcaption>Highlighted phrases came straight from reviews and carried into the script.</figcaption>
+  </figure>
+</section>
+
+<section class="how">
+  <h2>What happens to your reviews</h2>
+  <ol class="how-steps">
+    <li><h3>Collect</h3><p>Muse pulls reviews from the product page&rsquo;s Okendo widget, or uses the ones you paste.</p></li>
+    <li><h3>Read</h3><p>VADER scores sentiment, TF-IDF finds the phrases people repeat, and k-means groups reviews into themes.</p></li>
+    <li><h3>Write</h3><p>Llama 3.1 on Groq drafts the script from those findings. You see both, side by side, so you can check every claim against a real review.</p></li>
+  </ol>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Create account | Muse Copywriter{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>Create an account</h1>
+  <p class="muted">Your scripts are saved to your account so you can come back to them.</p>
+  <form method="post" class="form">
+    <label>Email <input type="email" name="email" value="{{ email or '' }}" autocomplete="email" required></label>
+    <label>Password <span class="hint">At least 8 characters</span>
+      <input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+    <button class="btn" type="submit">Create account</button>
+  </form>
+  <p class="muted">Already signed up? <a href="{{ url_for('login') }}">Log in</a></p>
+</section>
+{% endblock %}

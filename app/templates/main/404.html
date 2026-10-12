@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Not found | Muse Copywriter{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>That page isn&rsquo;t here</h1>
+  <p class="muted">The script may have been deleted, or the link belongs to another account.</p>
+  <a class="btn" href="{{ url_for('home') }}">Go to your scripts</a>
+</section>
+{% endblock %}

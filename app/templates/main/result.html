@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ d.product }} | Muse Copywriter{% endblock %}
+{% set a = d.analysis %}
+{% set dist = a.sentiment.distribution %}
+{% set total = (dist.pos + dist.neu + dist.neg) or 1 %}
+{% macro marked(text) %}{% for s in highlight(text, a.phrases) %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %}{% endfor %}{% endmacro %}
+
+{% block content %}
+<header class="result-head">
+  <div>
+    <h1>{{ d.product }}</h1>
+    <p class="muted">{{ d.reviews_count }} reviews from {{ 'the product page' if d.source == 'url' else 'your paste' }}, {{ gen.created_at.strftime('%d %b %Y, %H:%M') }} UTC</p>
+  </div>
+  <div class="result-actions">
+    <a class="btn btn-ghost" href="{{ url_for('download', gen_id=gen.id) }}">Download JSON</a>
+    <a class="btn" href="{{ url_for('new') }}">Write another</a>
+  </div>
+</header>
+
+<div class="result-grid">
+  <section class="script-col" aria-labelledby="script-title">
+    <h2 id="script-title" class="sr-only">Script</h2>
+    {% if d.script %}
+    <article class="script-card" data-copy-source>
+      <p class="script-headline" data-part="Headline">{{ d.script.headline }}</p>
+      {% if d.script.hook %}<p class="script-hook" data-part="Hook">{{ d.script.hook }}</p>{% endif %}
+      {% if d.script.body %}
+      <ul class="script-body" data-part="Body">{% for b in d.script.body %}<li>{{ b }}</li>{% endfor %}</ul>
+      {% endif %}
+      <p class="script-cta" data-part="CTA">{{ d.script.cta }}</p>
+    </article>
+    <div class="copy-row">
+      <button type="button" class="btn" data-copy-script>Copy script</button>
+      <span class="copy-status" role="status" aria-live="polite"></span>
+    </div>
+    {% elif d.generated %}
+    <p class="notice">The model didn&rsquo;t follow the headline, hook, body, CTA format, so here&rsquo;s its raw answer.</p>
+    <pre class="raw-output" data-copy-text>{{ d.generated }}</pre>
+    <div class="copy-row"><button type="button" class="btn" data-copy-raw>Copy text</button><span class="copy-status" role="status" aria-live="polite"></span></div>
+    {% else %}
+    <p class="notice">{% if d.error %}{{ d.error }}. {% endif %}No script this time. Paste the prompt below into any chat model, or set <code>GROQ_API_KEY</code> and write it again.</p>
+    {% endif %}
+
+    <details class="prompt">
+      <summary>Prompt sent to the model</summary>
+      <pre data-copy-text>{{ d.prompt }}</pre>
+      <button type="button" class="link-btn" data-copy-raw>Copy prompt</button>
+    </details>
+  </section>
+
+  <section class="evidence" aria-labelledby="evidence-title">
+    <h2 id="evidence-title">What customers said</h2>
+
+    <div class="sentiment">
+      <div class="sentiment-bar" role="img" aria-label="{{ dist.pos }} positive, {{ dist.neu }} neutral, {{ dist.neg }} negative">
+        {% if dist.pos %}<span class="s-pos" style="flex: {{ dist.pos }}"></span>{% endif %}
+        {% if dist.neu %}<span class="s-neu" style="flex: {{ dist.neu }}"></span>{% endif %}
+        {% if dist.neg %}<span class="s-neg" style="flex: {{ dist.neg }}"></span>{% endif %}
+      </div>
+      <p class="sentiment-legend">
+        <span><i class="s-pos"></i>{{ dist.pos }} positive</span>
+        <span><i class="s-neu"></i>{{ dist.neu }} neutral</span>
+        <span><i class="s-neg"></i>{{ dist.neg }} negative</span>
+        <span class="muted">Average {{ '%+.2f'|format(a.sentiment.avg) }} on a scale of &minus;1 to +1</span>
+      </p>
+    </div>
+
+    <h3>Phrases they repeat</h3>
+    <ul class="phrases">{% for p in a.phrases %}<li><mark>{{ p }}</mark></li>{% endfor %}</ul>
+
+    <h3>Themes</h3>
+    <ul class="themes">
+      {% for t in a.themes %}
+      <li>
+        <p class="theme-terms">{{ t.terms|join(', ') }} <span class="muted">{{ t.size }} review{{ 's' if t.size != 1 }}</span></p>
+        <blockquote>{{ marked(t.example) }}</blockquote>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <details class="all-reviews">
+      <summary>All {{ d.reviews|length }} reviews{% if d.reviews_count > d.reviews|length %} shown of {{ d.reviews_count }}{% endif %}</summary>
+      <ul>{% for r in d.reviews %}<li>{{ marked(r) }}</li>{% endfor %}</ul>
+    </details>
+  </section>
+</div>
+
+<form method="post" action="{{ url_for('delete', gen_id=gen.id) }}" class="delete-form">
+  <button class="link-btn link-danger" type="submit">Delete this script</button>
+</form>
+{% endblock %}
