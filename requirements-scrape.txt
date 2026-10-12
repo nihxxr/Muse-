@@ -1,0 +1,4 @@
+# Optional: headless Chrome fallback for review widgets that need JavaScript
+-r requirements.txt
+selenium>=4.20
+undetected-chromedriver>=3.5

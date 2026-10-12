@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}New script | Muse Copywriter{% endblock %}
+{% block content %}
+<div class="workspace">
+  <section class="compose">
+    <h1>New script</h1>
+    {% if not ai_enabled %}
+    <p class="notice">Copy generation is off because <code>GROQ_API_KEY</code> isn&rsquo;t set. You&rsquo;ll still get the review analysis and a ready prompt to paste into any chat model.</p>
+    {% endif %}
+    <form method="post" class="form" data-busy-form>
+      <label>Product name
+        <input name="product" value="{{ form.product or '' }}" placeholder="Beat massager" required></label>
+
+      <label>Product page <span class="hint">Optional. A mymuse.in product URL</span>
+        <input type="url" name="url" value="{{ form.url or '' }}" placeholder="https://mymuse.in/products/..." inputmode="url"></label>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="pasted">Reviews <span class="hint">One per line. Used if the page gives none.</span></label>
+          <button type="button" class="link-btn" data-fill-samples>Use sample reviews</button>
+        </div>
+        <textarea id="pasted" name="pasted" rows="9" placeholder="Felt premium straight out of the box&#10;So quiet my roommate never noticed">{{ form.pasted or '' }}</textarea>
+      </div>
+
+      <button class="btn" type="submit" data-busy-label="Reading reviews and writing">Write the script</button>
+    </form>
+    <script type="application/json" id="sample-reviews">{{ samples|tojson }}</script>
+  </section>
+
+  <aside class="history" aria-labelledby="history-title">
+    <h2 id="history-title">Your scripts</h2>
+    {% if history %}
+    <ul>
+      {% for g in history %}
+      <li><a href="{{ url_for('result', gen_id=g.id) }}">
+        <span class="history-headline">{{ g.headline or 'No script, analysis only' }}</span>
+        <span class="history-meta">{{ g.product }}, {{ g.created_at.strftime('%d %b') }}</span>
+      </a></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">Scripts you write show up here.</p>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}
